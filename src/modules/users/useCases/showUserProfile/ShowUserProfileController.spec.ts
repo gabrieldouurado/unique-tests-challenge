@@ -1,7 +1,6 @@
 import { Connection, createConnection } from "typeorm"
 import { app } from "../../../../app"
 import request from "supertest"
-import { Response } from "express"
 
 describe("Show User Profile Controller", () => {
     let connection: Connection
