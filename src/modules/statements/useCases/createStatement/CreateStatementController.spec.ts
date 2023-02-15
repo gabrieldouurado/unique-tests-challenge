@@ -48,7 +48,7 @@ describe("Create Statement Controller", () => {
         expect(depositResponse.status).toBe(201)
     })
 
-    it("Should not be able to create a deposit statement with user is not authentiqued", async () => {
+    it("Should not be able to create a deposit statement with user is not authenticatedd", async () => {
         const depositResponse = await request(app)
         .post("/api/v1/statements/deposit")
         .send({
@@ -98,7 +98,7 @@ describe("Create Statement Controller", () => {
         expect(withdrawResponse.status).toBe(400)
     })
 
-    it("Should not be able to create a withdraw statement with user is not authentiqued", async () => {
+    it("Should not be able to create a withdraw statement with user is not authenticatedd", async () => {
         const withdrawResponse = await request(app)
         .post("/api/v1/statements/withdraw")
         .send({

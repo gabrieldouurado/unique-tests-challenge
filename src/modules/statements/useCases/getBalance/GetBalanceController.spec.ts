@@ -46,7 +46,7 @@ describe("Get Balance Controller", () => {
         expect(balanceResponse.body).toHaveProperty("balance")
     })
 
-    it("Should not be able to get balance of not authentiqued user", async () => {
+    it("Should not be able to get balance of not authenticatedd user", async () => {
         const balanceResponse = await request(app)
         .get("/api/v1/statements/balance")
 
