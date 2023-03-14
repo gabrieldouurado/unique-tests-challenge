@@ -25,7 +25,6 @@ describe("Create Statement Controller", () => {
         })
 
         userToken = `Bearer ${authenticateResponse.body.token}`
-
     })
 
     afterEach(async () => {
@@ -107,5 +106,75 @@ describe("Create Statement Controller", () => {
         })
 
         expect(withdrawResponse.status).toBe(401)
+    })
+
+    it("Should be able to create a new transfer statement", async () => {
+        //Cria um novo usuário para receber a transferencia
+        const userReceivedTransfer = await request(app).post("/api/v1/users").send({
+            name: "Marie",
+            email: "Marie@email.com",
+            password: "Marie@123"
+        })
+
+        //Realiza um depósito na conta do usuário que irá FAZER a transferencia
+        await request(app)
+        .post("/api/v1/statements/deposit")
+        .set("Authorization", userToken)
+        .send({
+            amount: 100,
+            description: "Deposit statement description"
+        })
+
+        const transferResponse = await request(app)
+        .post(`/api/v1/statements/transfer/${userReceivedTransfer.body.id}`)
+        .set("Authorization", userToken)
+        .send({
+            amount: 36,
+            description: "Transfer to Marie"
+        })
+
+        expect(transferResponse.status).toBe(201)
+    })
+
+    it("Should not be able to create transfer when balence sender balence insufficient", async () => {
+        //Cria um novo usuário para receber a transferencia
+        const userReceivedTransfer = await request(app).post("/api/v1/users").send({
+            name: "Marie",
+            email: "Marie@email.com",
+            password: "Marie@123"
+        })
+
+        const transferResponse = await request(app)
+        .post(`/api/v1/statements/transfer/${userReceivedTransfer.body.id}`)
+        .set("Authorization", userToken)
+        .send({
+            amount: 99,
+            description: "Transfer to Marie"
+        })
+
+        expect(transferResponse.status).toBe(400)
+        expect(transferResponse.body.message).toEqual('Insufficient funds')
+    })
+
+    it("Should not be able to create a new transfer when received not found", async () => {
+        //Realiza um depósito na conta do usuário que irá FAZER a transferencia
+        await request(app)
+        .post("/api/v1/statements/deposit")
+        .set("Authorization", userToken)
+        .send({
+            amount: 100,
+            description: "Deposit statement description"
+        })
+
+        const transferResponse = await request(app)
+        .post("/api/v1/statements/transfer/22d9c1aa-593a-463a-a15b-e62761e994ca")
+        .set("Authorization", userToken)
+        .send({
+            amount: 36,
+            description: "Transfer to Marie"
+        })        
+
+        expect(transferResponse.status).toBe(404)
+        expect(transferResponse.body.message).toBe('Receiver not found')
     })
 })
