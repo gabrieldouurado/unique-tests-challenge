@@ -6,6 +6,10 @@ How to running tests:
 
 ``docker run --name fin_api_database_test -e POSTGRES_DB=fin_api_test -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres``
 
+2. Migração da Base de Dados
+
+``yarn typeorm migration:run``
+
 2. Run tests
 
 ``yarn test``
